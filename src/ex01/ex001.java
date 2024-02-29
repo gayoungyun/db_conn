@@ -33,6 +33,7 @@ class DB_con{
 		try {
 			ps = con.prepareStatement(sql); //텍스트 sql호출
 			rs = ps.executeQuery(); //resultset 객체의 값을 반환, 반환된 객체를 통해 결과를 가져옴
+			//System.out.println(rs.next());
 			while(rs.next()) {
 				MemberDTO dto =new MemberDTO();
 				dto.setId(rs.getString("id"));
@@ -41,7 +42,24 @@ class DB_con{
 				dto.setAge(rs.getInt("age"));
 
 				arr.add(dto);
+				/*
+					System.out.println(rs.getString("id"));
+					System.out.println(rs.getString("pwd"));
+					System.out.println(rs.getString("name"));
+					System.out.println(rs.getInt("age"));
+					System.out.println("------------------");
+				 */
 			}
+
+			/*
+				System.out.println(rs.next());
+				System.out.println(rs.getString("id"));
+				System.out.println(rs.getString("pwd"));
+				System.out.println(rs.getString("name"));
+				System.out.println(rs.getInt("age"));
+
+				System.out.println(rs.next());
+			 */
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,6 +79,12 @@ class DB_con{
 				dto.setId(rs.getString("id"));
 				dto.setPwd(rs.getString("pwd"));
 				dto.setName(rs.getString("name"));
+				/*
+					System.out.println(rs.getString("id"));
+					System.out.println(rs.getString("pwd"));
+					System.out.println(rs.getString("name"));
+					System.out.println(rs.getInt("age"));
+				 */
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -90,6 +114,31 @@ class DB_con{
 			ps.setInt(4, dto.getAge());
 
 			result = ps.executeUpdate();//성공 1(return)으로 실패 0
+
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+	public int modify(MemberDTO dto) {
+		String sql = "update member_test set id = ?";
+		int result = 0;
+		//ArrayList<MemberDTO> arr = new ArrayList<>();
+		//MemberDTO dtt =null;
+
+		try {
+			ps = con.prepareStatement(sql);
+			//rs = ps.executeQuery();
+			//if(rs.next()) {
+			//	dtt = new MemberDTO();
+			//dtt.setId(rs.getString("id"));
+			ps.setString(1, dto.getId());
+			result = ps.executeUpdate();
+
+			//while(rs.next()) {
+			//dtt.setId(rs.getString("id"));
+			//arr.add(dto);
+
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -107,6 +156,7 @@ public class MainClass {
 			System.out.println("2.특정 사용자 보기");
 			System.out.println("3.데이터 추가");
 			System.out.println("4.데이터 삭제");
+			System.out.println("5.데이터 수정");
 			System.out.println(">>> : ");
 			num = input.nextInt();
 			switch(num) {
@@ -163,6 +213,28 @@ public class MainClass {
 				else
 					System.out.println("존재하는 id는 안됨!!");
 				break;
+
+			case 5 :
+				MemberDTO dtt = new MemberDTO();
+
+				while(true) {
+					System.out.println("수정 id 입력");
+					String alterId = input.next();
+					MemberDTO mo = db.selectOne(alterId);
+					if(mo == null)
+						System.out.println("id 다시 입력해주세요");
+				}else  {
+					System.out.println("---수정id---");
+					dtt.setId(input.next());
+
+					int moi = db.modify(dtt);
+					if(moi == 1)
+						System.out.println("수정 성공!!");
+					else
+						System.out.println("다시 입력");
+				}
+				break;
+
 			case 4 : 
 				System.out.println("삭제 id 입력");
 				String delId = input.next();
@@ -173,9 +245,11 @@ public class MainClass {
 					System.out.println("존재하지 않는 아이디 삭제 불가!!");
 				}
 				break;
+
 			}
 		}
+
 	}
+
+
 }
-
-
